@@ -9,6 +9,8 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
+
+
 var logger = shim.NewLogger("mylogger")
 
 type VoteCategory struct {

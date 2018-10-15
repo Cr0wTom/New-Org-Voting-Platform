@@ -50,6 +50,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	// Route to the appropriate handler function to interact with the ledger appropriately
 	if function == "queryVoter" {
 		return s.queryVoter(APIstub, args)
+	} else if function == "queryVotings" {
+		return s.queryVotings(APIstub)
+	} else if function == "queryAllVottings" {
+		return s.queryAllVottings(APIstub)
 	} else if function == "initLedger" {
 		return s.initLedger(APIstub)
 	} else if function == "queryAllVotes" {
@@ -194,6 +198,32 @@ func (s *SmartContract) queryAllVottings(APIstub shim.ChaincodeStubInterface) sc
 	return shim.Success(buffer.Bytes())
 }
 
+func (s *SmartContract) createVoting(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	voterAsBytes, _ := APIstub.GetState(args[0])
+	vote := Votings{}
+
+
+
+	json.Unmarshal(voterAsBytes, &vote)
+	// if (name.Name == "VOTINGNAME"){
+		fmt.Println("Voting accepted!")
+		name.Name = args[1]
+//	}else{
+//		return shim.Error("Voting Exists! You can only create the same voting once!")
+//	}
+
+
+	voterAsBytes, _ = json.Marshal(vote)
+	APIstub.PutState(args[0], voterAsBytes)
+
+	return shim.Success(nil)
+}
+
 func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
 	if len(args) != 2 {
@@ -206,7 +236,7 @@ func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []str
 
 
 	json.Unmarshal(voterAsBytes, &vote)
-	// if (vote.Vote == "SINVOTAR"){
+	// if (vote.Vote == "VOTER"){
 		fmt.Println("You havent voted before, vote accepted!")
 		vote.Vote = args[1]
 //	}else{

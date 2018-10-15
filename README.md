@@ -8,4 +8,4 @@
   node registerUser.js
   node app.js
   
-Thanks to https://github.com/vasisouv for page prototype.
+Thanks to [vasisouv](https://github.com/vasisouv) for page prototype.

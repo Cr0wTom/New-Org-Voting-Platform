@@ -22,7 +22,6 @@ type SmartContract struct {
 
 // Define the vote structure, with 4 properties.  Structure tags are used by encoding/json library
 type Asset_Votes struct {
-	Voting string `json:"voting"`
 	Vote string `json:"vote"`
 	OwnerId  string `json:"ownerid"`
 	OwnerDesc string `json:"ownerdesc"`
@@ -91,6 +90,11 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Nuro"},
 	}
 
+	votings := []Votings{
+		Votings{Name: "Test Voting 1"},
+		Votings{Name: "Test Voting 2"}
+	}
+
 	i := 0
 	for i < len(voters) {
 		fmt.Println("i is ", i)
@@ -143,6 +147,49 @@ func (s *SmartContract) queryAllVotes(APIstub shim.ChaincodeStubInterface) sc.Re
 	buffer.WriteString("]")
 
 	fmt.Printf("- queryAllVotes:\n%s\n", buffer.String())
+
+	return shim.Success(buffer.Bytes())
+}
+
+func (s *SmartContract) queryAllVottings(APIstub shim.ChaincodeStubInterface) sc.Response {
+
+	startKey := "VOTING1"
+	endKey := "VOTING999"
+
+	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	// buffer is a JSON array containing QueryResults
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"Key\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(queryResponse.Key)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Record\":")
+		// Record is a JSON object, so we write as-is
+		buffer.WriteString(string(queryResponse.Value))
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+
+	fmt.Printf("- queryAllVottings:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }

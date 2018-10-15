@@ -1,0 +1,44 @@
+.footer-content-area {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.color-grey {
+    color: #000;
+}
+
+.cursor-pointer:hover {
+    cursor: pointer;
+}
+
+.map {
+    height: 500px;
+}
+
+.dd-arrow::before {
+    background-color: #FFFFFF;
+}
+
+.classynav .dropdown a {
+    color: #2f2d2a;
+}
+
+.classynav .dropdown a:hover {
+    color: #000000;
+    background-color: gainsboro;
+}
+
+.oswinds-logo-footer {
+    width: 30%;
+}
+
+.eu-flag-footer {
+    width: 60px;
+    margin-right: 10px;
+}
+
+.footer-eu-text {
+    color: #ffffee;
+    font-size: 12px;
+    margin: 0;
+}

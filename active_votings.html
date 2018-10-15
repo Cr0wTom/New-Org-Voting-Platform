@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html ng-app="lostsysApp">
+
+<!-- Mirrored from 155.207.131.145:5110/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Jun 2018 12:06:35 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>PlasticTwist Voting</title>
+
+    <meta name="description" content="An open platform for plastic reuse.">
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.11/angular.min.js"></script>
+    <script>
+    var angularTodo = angular.module('lostsysApp', []);
+
+
+    angularTodo.controller('mainController', function($scope, $http) {
+        $scope.names = [];
+    $scope.isVisible=true;
+    $scope.voteVisible=false;
+
+        $scope.addVote = function(votevalue) {
+            $http.get('http://localhost:8080/votar/'+$scope.idvoter+'/'+votevalue)
+                .success(function(data) {
+                    console.log(data)
+                    alert(data);
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+        alert("Are you sure you want to submit this vote?");
+            $scope.idvoter="";
+            //$scope.vote="";
+        }
+        $scope.inquiry = function() {
+          $scope.voteVisible=true;
+            $http.get('http://localhost:8080/query')
+                .success(function(data) {
+                    $scope.Blockchain = data;
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+
+        }
+        $scope.loadgraph = function() {
+            $http.get('http://localhost:8080/graph')
+                .success(function(mdata) {
+                    drawChart(mdata);
+                })
+                .error(function(mdata) {
+                    console.log('Error: ' + mdata);
+                });
+        }
+    });
+    </script>
+    <script type="text/javascript">
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', {'packages':['corechart']});
+
+    // Set a callback to run when the Google Visualization API is loaded.
+    //google.charts.setOnLoadCallback(drawChart);
+
+    // Callback that creates and populates a data table,
+    // instantiates the pie chart, passes in the data and
+    // draws it.
+    function drawChart(dataarray) {
+
+    var data = new google.visualization.DataTable();
+
+
+    data.addColumn('string', 'Topping');
+    data.addColumn('number', 'Slices');
+
+    for (var x=0;x < dataarray.length;x++){
+        var searchvalue = "";
+        var sumvalue=0;
+        for (var y=0;y < dataarray.length;y++){
+            if (dataarray[y].Record.vote != ""){
+                if (searchvalue == ""){
+                    searchvalue = dataarray[y].Record.vote;
+                    dataarray[y].Record.vote="";
+                    sumvalue = sumvalue + parseInt(dataarray[y].Record.factor);
+                    dataarray[y].Record.factor="";
+                }else{
+                    if (searchvalue==dataarray[y].Record.vote){
+                        sumvalue = sumvalue + parseInt(dataarray[y].Record.factor);
+                        dataarray[y].Record.vote="";
+                        dataarray[y].Record.factor="";
+                    }
+                }
+            }
+        }
+        if (searchvalue != "") { data.addRow(new Array(searchvalue,parseInt(sumvalue))); }
+    }
+    var options = {'title':'Blockchain Votes by Factor',
+                   'width':800,
+                   'height':600};
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+    }
+    </script>
+
+    <!-- Vendor styles -->
+    <link rel="stylesheet" type="text/css"
+          href="static/vendor/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/vendor/animate/animate.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/vendor/classy-nav/classy-nav.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/vendor/dsparallaxer/dsparallaxer.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/vendor/owl-carousel/owl-carousel.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/vendor/bootstrap-datepicker/daterangepicker.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/vendor/leaflet/leaflet.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.11/css/all.css"
+          integrity="sha384-p2jx59pefphTFIpeqCcISO9MdVfIm4pNnsL08A6v5vaQc4owkQqxMV8kg4Yvhaw/" crossorigin="anonymous">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" type="text/css" href="static/css/theme.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/custom.css"/>
+    <link rel="stylesheet" type="text/css" href="static/css/loading.css"/>
+
+
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+</head>
+
+<!--/* ##### Import All CSS ##### */-->
+
+
+<!--@import 'css/about-sonar.css';-->
+<!--@import 'css/owl.carousel.min.css';-->
+<!--@import 'css/magnific-popup.css';-->
+<!--@import 'css/animated-headline.css';-->
+<!--@import 'css/font-awesome.min.css';-->
+<!--@import 'css/themify-icons.css';-->
+<body ng-controller="mainController">>
+<!-- ##### Header Area Start ##### -->
+<header class="header-area wow fadeInDown" data-wow-delay="0.2s">
+
+    <div class="classy-nav-container breakpoint-off">
+        <div class="container">
+            <!-- Classy Menu -->
+            <nav class="classy-navbar justify-content-between" id="dreamNav">
+
+                <!-- Logo -->
+                <a class="nav-brand" href="index.html"><img src="static/img/ptwist_logo_50px.png"> PlasticTwist Voting</a>
+
+                <!-- Navbar Toggler -->
+                <div class="classy-navbar-toggler">
+                    <span class="navbarToggler"><span></span><span></span><span></span></span>
+                </div>
+
+                <!-- Menu -->
+                <div class="classy-menu">
+
+                    <!-- close btn -->
+                    <div class="classycloseIcon">
+                        <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                    </div>
+
+                    <!-- Nav Start -->
+                    <div class="classynav">
+
+                    </div>
+                    <!-- Nav End -->
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+<!-- ##### Header Area End ##### -->
+
+
+<!-- ##### Welcome Area Start ##### -->
+<section class="welcome_area clearfix dzsparallaxer auto-init fullwidth" data-options='{direction: "normal"}' id="home">
+    <div class="divimage dzsparallaxer--target"
+         style="width: 100%; height: 100%; background-image: url(static/img/bg.jpg)"></div>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+        <!-- blip -->
+        <div class="dream-blip blip1"></div>
+        <div class="dream-blip blip2"></div>
+        <div class="dream-blip blip3"></div>
+        <div class="dream-blip blip4"></div>
+
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <!-- Welcome Content -->
+                <div class="col-12 col-md-7">
+                    <div class="welcome-content">
+                        <h2 class="wow fadeInUp" data-wow-delay="0.2s">New Org Blockchain Vote</h2>
+                        <div class="form-group">
+                            <input type="text" ng-model="idvoter" placeholder="Voter" class="form-control input-lg text-center" />
+                        </div>
+                        <div class="form-group">
+                            <button class="btn dream-btn mr-3" ng-click="addVote('YES')">YES</button>
+                            <button class="btn dream-btn" ng-click="addVote('NO')">NO</button>
+                        </div>
+                      </br>
+                        <div class="dream-btn-group wow fadeInUp" data-wow-delay="0.4s">
+                            <button class="btn dream-btn mr-3" ng-click="inquiry()">Query</button>
+                            <button class="btn dream-btn" ng-click="loadgraph()">Chart</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Welcome Video Area -->
+                <div class="col-12 col-md-5">
+                    <div class="welcome-video-area wow fadeInUp" data-wow-delay="0.5s">
+                        <!-- Welcome Thumbnail -->
+                        <div class="welcome-thumb">
+                            <img src="static/img/ptwist_logo.png" alt="">
+                        </div>
+                        <!-- Video Icon -->
+                        <!--<div class="video-icon">-->
+                        <!--<a href="https://www.youtube.com/watch?v=gbXEPHsTkgU" class="btn dream-btn video-btn"-->
+                        <!--id="videobtn"><i class="fa fa-play"></i></a>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ##### Welcome Area End ##### -->
+<div class="form-group">
+<table ng-show="voteVisible" cellpadding="1" cellspacing="1" class="table table-dark">
+          <tr>
+              <th scope="col">Voter ID</th>
+              <th scope="col">Document</th>
+  <th scope="col">Name</th>
+  <th scope="col">Factor</th>
+  <th scope="col">Vote</th>
+          </tr>
+<tbody ng-repeat="n in Blockchain">
+              <tr>
+                  <th scope="row">{{n.Key}}</th>
+              <td>{{n.Record.ownerid}}</td>
+              <td>{{n.Record.ownerdesc}}</td>
+                  <td>{{n.Record.factor}}</td>
+              <td>{{n.Record.vote}}</td>
+              </tr>
+          </tbody>
+</table>
+<center><div id="chart_div"></div></center>
+
+
+<!-- ##### Footer Area Start ##### -->
+<footer class="footer-area">
+
+
+    <div class="footer-content-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="footer-copywrite-info">
+                        <!-- Copywrite -->
+                        <div class="copywrite_text" data-wow-delay="0.2s">
+                            <a target="_blank" href="http://oswinds.csd.auth.gr/">
+                                <img class="oswinds-logo-footer"
+                                     src="static/img/oswinds_logo_bnw.png">
+                            </a>
+                        </div>
+                        <!-- Social Icon -->
+                        <div class="footer-social-info wow fadeInUp" data-wow-delay="0.4s">
+                            <a target="_blank" href="https://www.facebook.com/oswinds/"><i class="fab fa-facebook-f"></i></a>
+                            <a target="_blank" href="https://twitter.com/oswinds_auth"> <i class="fab fa-twitter" aria-hidden="true"></i></a>
+                            <a target="_blank" href="https://github.com/OSWINDS"><i class="fab fa-github" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 d-flex align-items-center">
+                    <!-- Content Info -->
+                    <img class="float-left eu-flag-footer" src="static/img/eu_flag.png">
+                    <p class="footer-eu-text"> This work has been supported by the European Union’s Horizon 2020
+                        Research and Innovation Programme under Grant Agreement No. 780121.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Vendor scripts -->
+<script src="static/vendor/jquery/jquery.min.js"></script>
+<script src="static/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="static/vendor/momentjs/moment.js"></script>
+
+<script src="static/vendor/active/active.js"></script>
+<script src="static/vendor/wordcloud2/wordcloud2.js"></script>
+<script src="static/vendor/vue/vue.js"></script>
+<script src="static/vendor/axios/axios.min.js"></script>
+<script src="static/vendor/bootstrap-datepicker/daterangepicker.js"></script>
+<script src="static/vendor/leaflet/leaflet.js"></script>
+
+<!-- Custom scripts -->
+<script src="static/js/custom.js"></script>
+
+
+
+</body>
+
+</html>

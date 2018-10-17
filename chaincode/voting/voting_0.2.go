@@ -51,7 +51,7 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	if function == "queryVoter" {
 		return s.queryVoter(APIstub, args)
 	} else if function == "queryVotings" {
-		return s.queryVotings(APIstub)
+		return s.queryVotings(APIstub, args)
 	} else if function == "queryAllVottings" {
 		return s.queryAllVottings(APIstub)
 	} else if function == "initLedger" {
@@ -71,8 +71,8 @@ func (s *SmartContract) queryVotings(APIstub shim.ChaincodeStubInterface, args [
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	voterAsBytes, _ := APIstub.GetState(args[0])
-	return shim.Success(voterAsBytes)
+	votingAsBytes, _ := APIstub.GetState(args[0])
+	return shim.Success(votingAsBytes)
 }
 
 // Query votes
@@ -96,7 +96,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 
 	votings := []Votings{
 		Votings{Name: "Test Voting 1"},
-		Votings{Name: "Test Voting 2"}
+		Votings{Name: "Test Voting 2"},
 	}
 
 	i := 0
@@ -106,6 +106,15 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 		APIstub.PutState("VOTER"+strconv.Itoa(i), voterAsBytes)
 		fmt.Println("Added", voters[i])
 		i = i + 1
+	}
+
+	j := 0
+	for j < len(votings) {
+		fmt.Println("j is ", j)
+		votingAsBytes, _ := json.Marshal(votings[j])
+		APIstub.PutState("VOTING"+strconv.Itoa(j), votingAsBytes)
+		fmt.Println("Added", votings[j])
+		j = j + 1
 	}
 
 	return shim.Success(nil)
@@ -204,12 +213,12 @@ func (s *SmartContract) createVoting(APIstub shim.ChaincodeStubInterface, args [
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
-	voterAsBytes, _ := APIstub.GetState(args[0])
-	vote := Votings{}
+	votingAsBytes, _ := APIstub.GetState(args[0])
+	name := Votings{}
 
 
 
-	json.Unmarshal(voterAsBytes, &vote)
+	json.Unmarshal(votingAsBytes, &name)
 	// if (name.Name == "VOTINGNAME"){
 		fmt.Println("Voting accepted!")
 		name.Name = args[1]
@@ -218,8 +227,8 @@ func (s *SmartContract) createVoting(APIstub shim.ChaincodeStubInterface, args [
 //	}
 
 
-	voterAsBytes, _ = json.Marshal(vote)
-	APIstub.PutState(args[0], voterAsBytes)
+	votingAsBytes, _ = json.Marshal(name)
+	APIstub.PutState(args[0], votingAsBytes)
 
 	return shim.Success(nil)
 }

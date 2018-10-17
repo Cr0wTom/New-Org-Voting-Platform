@@ -24,7 +24,7 @@
     $scope.voteVisible=false;
 
         $scope.addVote = function(votevalue) {
-            $http.get('http://localhost:8080/votar/'+$scope.idvoter+'/'+votevalue)
+            $http.get('http://localhost:8080/voter/'+$scope.idvoter+'/'+votevalue)
                 .success(function(data) {
                     console.log(data)
                     alert(data);
@@ -36,6 +36,26 @@
             $scope.idvoter="";
             //$scope.vote="";
         }
+        $scope.$on('$viewContentLoaded', function(){
+            $scope.voteVisible=true;
+            $http.get('http://localhost:8080/query_votings')
+                .success(function(data) {
+                    $scope.Blockchain = data;
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+        });
+        
+        $scope.loadgraph = function() {
+            $http.get('http://localhost:8080/graph')
+                .success(function(mdata) {
+                    drawChart(mdata);
+                })
+                .error(function(mdata) {
+                    console.log('Error: ' + mdata);
+                });
+        }
         $scope.inquiry = function() {
           $scope.voteVisible=true;
             $http.get('http://localhost:8080/query')
@@ -46,15 +66,6 @@
                     console.log('Error: ' + data);
                 });
 
-        }
-        $scope.loadgraph = function() {
-            $http.get('http://localhost:8080/graph')
-                .success(function(mdata) {
-                    drawChart(mdata);
-                })
-                .error(function(mdata) {
-                    console.log('Error: ' + mdata);
-                });
         }
     });
     </script>
@@ -209,7 +220,10 @@
                         <h3 class="wow fadeInUp" data-wow-delay="0.2s">Select your voting:</h3>
                         
                         <div class="form-group">
-                            <input type="text" ng-model="idvoter" placeholder="Voter" class="form-control input-lg text-center" />
+                            <!--<input ng-model="idvoting" list="voting" placeholder="Voting" class="form-control input-lg text-center"/>-->
+                            <select class="form-control">
+                                <option *ngFor="let b of Blockchain" value="test">Test</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <button class="btn dream-btn mr-3" ng-click="addVote('YES')">YES</button>

@@ -22,23 +22,9 @@
         $scope.names = [];
     $scope.isVisible=true;
     $scope.voteVisible=false;
-
-        $scope.addVote = function(votevalue) {
-            $http.get('http://localhost:8080/votar/'+$scope.idvoter+'/'+votevalue)
-                .success(function(data) {
-                    console.log(data)
-                    alert(data);
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
-        alert("Are you sure you want to submit this vote?");
-            $scope.idvoter="";
-            //$scope.vote="";
-        }
         $scope.inquiry = function() {
           $scope.voteVisible=true;
-            $http.get('http://localhost:8080/query')
+            $http.get('http://localhost:8080/query_votings')
                 .success(function(data) {
                     $scope.Blockchain = data;
                 })
@@ -46,15 +32,6 @@
                     console.log('Error: ' + data);
                 });
 
-        }
-        $scope.loadgraph = function() {
-            $http.get('http://localhost:8080/graph')
-                .success(function(mdata) {
-                    drawChart(mdata);
-                })
-                .error(function(mdata) {
-                    console.log('Error: ' + mdata);
-                });
         }
     });
     </script>
@@ -204,18 +181,9 @@
                 <!-- Welcome Content -->
                 <div class="col-12 col-md-7">
                     <div class="welcome-content">
-                        <h2 class="wow fadeInUp" data-wow-delay="0.2s">New Org Blockchain Vote</h2>
-                        <div class="form-group">
-                            <input type="text" ng-model="idvoter" placeholder="Voter" class="form-control input-lg text-center" />
-                        </div>
-                        <div class="form-group">
-                            <button class="btn dream-btn mr-3" ng-click="addVote('YES')">YES</button>
-                            <button class="btn dream-btn" ng-click="addVote('NO')">NO</button>
-                        </div>
-                      </br>
+                        <h2 class="wow fadeInUp" data-wow-delay="0.2s">Votings Listo for New Org Add</h2>
                         <div class="dream-btn-group wow fadeInUp" data-wow-delay="0.4s">
                             <button class="btn dream-btn mr-3" ng-click="inquiry()">Query</button>
-                            <button class="btn dream-btn" ng-click="loadgraph()">Chart</button>
                         </div>
                     </div>
                 </div>

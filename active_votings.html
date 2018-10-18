@@ -23,7 +23,7 @@
     $scope.isVisible=true;
     $scope.voteVisible=false;
         
-        $scope.inquiry = function() {
+    $scope.inquiry = function() {
           $scope.voteVisible=true;
             $http.get('http://localhost:8080/query_votings')
                 .success(function(data) {

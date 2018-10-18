@@ -38,12 +38,13 @@ app.get('/index.html', function(req,res) {
   res.sendfile("./index.html");
 });
 
-app.get('/voter/:id/:vote', function (req, res, next) {
+app.get('/voter/:id/:vote/:voting', function (req, res, next) {
   console.log('ID:', req.params.id);
   console.log('VOTE:', req.params.vote);
+  console.log('VOTING:', req.params.voting);
   next();
 }, function (req, res, next) {
-    vote.dovote(req.params.id,req.params.vote,
+    vote.dovote(req.params.id,req.params.vote,req.params.voting,
           function back(param){ res.send(param); }
     );
 });

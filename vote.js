@@ -29,7 +29,7 @@ var tx_id = null;
 
 
 module.exports = {
-  dovote: function (voterid,vote,callback) {
+  dovote: function (voterid,vote,voting,callback) {
 // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
 Fabric_Client.newDefaultKeyValueStore({ path: store_path
 }).then((state_store) => {
@@ -63,7 +63,7 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	  //targets: let default to the peer assigned to the client
 	  chaincodeId: 'voting',
 	  fcn: 'doVoting',
-	  args: ['VOTER'+voterid, ''+vote],
+	  args: ['VOTER'+voterid, ''+vote, ''+voting],
 	  chainId: 'mychannel',
 	  txId: tx_id
 	};

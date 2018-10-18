@@ -25,6 +25,7 @@ type Asset_Votes struct {
 	Vote string `json:"vote"`
 	OwnerId  string `json:"ownerid"`
 	OwnerDesc string `json:"ownerdesc"`
+	Voting string `json:"voting"`
 }
 
 type Votings struct {
@@ -88,15 +89,17 @@ func (s *SmartContract) queryVoter(APIstub shim.ChaincodeStubInterface, args []s
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	voters := []Asset_Votes{
-	    Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "AUTh"},
-		Asset_Votes{Vote: "NO", OwnerId: "12345", OwnerDesc: "Almerys"},
-		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Eolas"},
-		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Nuro"},
+	    Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "AUTh", Voting:"Test Voting"},
+		Asset_Votes{Vote: "NO", OwnerId: "12345", OwnerDesc: "Almerys", Voting:"Test Voting"},
+		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Eolas", Voting:"Test Voting"},
+		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Nuro", Voting:"Test Voting"},
 	}
 
 	votings := []Votings{
-		Votings{Name: "Test Voting 1"},
-		Votings{Name: "Test Voting 2"},
+		Votings{Name: "Test1"},
+		Votings{Name: "Test2"},
+		Votings{Name: "Test3"},
+		Votings{Name: "Test4"},
 	}
 
 	i := 0
@@ -166,7 +169,7 @@ func (s *SmartContract) queryAllVotes(APIstub shim.ChaincodeStubInterface) sc.Re
 
 func (s *SmartContract) queryAllVottings(APIstub shim.ChaincodeStubInterface) sc.Response {
 
-	startKey := "VOTING1"
+	startKey := "VOTING0"
 	endKey := "VOTING999"
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
@@ -235,7 +238,7 @@ func (s *SmartContract) createVoting(APIstub shim.ChaincodeStubInterface, args [
 
 func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 2 {
+	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
@@ -245,12 +248,13 @@ func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []str
 
 
 	json.Unmarshal(voterAsBytes, &vote)
-	// if (vote.Vote == "VOTER"){
+	//if (vote.Vote == "VOTER"){
 		fmt.Println("You havent voted before, vote accepted!")
 		vote.Vote = args[1]
-//	}else{
-//		return shim.Error("Already voted before!, you can only vote once")
-//	}
+		vote.Voting = args[2]
+	//}else{
+	//	return shim.Error("Already voted before!, you can only vote once")
+	//}
 
 
 	voterAsBytes, _ = json.Marshal(vote)

@@ -23,7 +23,6 @@ type SmartContract struct {
 // Define the vote structure, with 4 properties.  Structure tags are used by encoding/json library
 type Asset_Votes struct {
 	Vote string `json:"vote"`
-	OwnerId  string `json:"ownerid"`
 	OwnerDesc string `json:"ownerdesc"`
 	Voting string `json:"voting"`
 }
@@ -89,10 +88,10 @@ func (s *SmartContract) queryVoter(APIstub shim.ChaincodeStubInterface, args []s
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	voters := []Asset_Votes{
-	    Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "AUTh", Voting:"Test Voting"},
-		Asset_Votes{Vote: "NO", OwnerId: "12345", OwnerDesc: "Almerys", Voting:"Test Voting"},
-		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Eolas", Voting:"Test Voting"},
-		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Nuro", Voting:"Test Voting"},
+	    Asset_Votes{Vote: "YES", OwnerDesc: "AUTh", Voting:"Test Voting"},
+		Asset_Votes{Vote: "NO", OwnerDesc: "Almerys", Voting:"Test Voting"},
+		Asset_Votes{Vote: "YES", OwnerDesc: "Eolas", Voting:"Test Voting"},
+		Asset_Votes{Vote: "YES", OwnerDesc: "Nuro", Voting:"Test Voting"},
 	}
 
 	votings := []Votings{
@@ -238,8 +237,8 @@ func (s *SmartContract) createVoting(APIstub shim.ChaincodeStubInterface, args [
 
 func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
 	voterAsBytes, _ := APIstub.GetState(args[0])
@@ -252,6 +251,7 @@ func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []str
 		fmt.Println("You havent voted before, vote accepted!")
 		vote.Vote = args[1]
 		vote.Voting = args[2]
+		vote.OwnerDesc = args[3]
 	//}else{
 	//	return shim.Error("Already voted before!, you can only vote once")
 	//}

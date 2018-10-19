@@ -59,11 +59,14 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	// createCar chaincode function - requires 5 args, ex: args: ['CAR12', 'Honda', 'Accord', 'Black', 'Tom'],
 	// changeCarOwner chaincode function - requires 2 args , ex: args: ['CAR10', 'Barry'],
 	// must send the proposal to endorsing peers
+	let member_user_json = JSON.parse(member_user)
+	let member_user_name = member_user_json.name
+	console.log(member_user_name)
 	var request = {
 	  //targets: let default to the peer assigned to the client
 	  chaincodeId: 'voting',
 	  fcn: 'doVoting',
-	  args: ['VOTER'+voterid, ''+vote, ''+voting],
+	  args: ['VOTER'+voterid, ''+vote, ''+voting, ''+member_user_name],
 	  chainId: 'mychannel',
 	  txId: tx_id
 	};

@@ -60,6 +60,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryAllVotes(APIstub)
 	} else if function == "doVoting" {
 		return s.doVoting(APIstub, args)
+	} else if function == "createVoting" {
+		return s.createVoting(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")

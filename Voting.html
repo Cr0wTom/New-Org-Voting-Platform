@@ -268,7 +268,6 @@
 <table ng-show="voteVisible" cellpadding="1" cellspacing="1" class="table table-dark">
           <tr>
               <th scope="col">Voter ID</th>
-              <th scope="col">Document</th>
   <th scope="col">Name</th>
   <th scope="col">Vote</th>
   <th scope="col">Voting</th>
@@ -276,7 +275,6 @@
 <tbody ng-repeat="n in Blockchain">
               <tr>
                   <th scope="row">{{n.Key}}</th>
-              <td>{{n.Record.ownerid}}</td>
               <td>{{n.Record.ownerdesc}}</td>
               <td>{{n.Record.vote}}</td>
               <td>{{n.Record.voting}}</td>

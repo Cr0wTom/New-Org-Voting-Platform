@@ -38,6 +38,7 @@ app.get('/index.html', function(req,res) {
   res.sendfile("./index.html");
 });
 
+
 app.get('/voting/:id/:voting', function (req, res, next) {
     console.log('ID:', req.params.id);
     console.log('VOTING:', req.params.voting);

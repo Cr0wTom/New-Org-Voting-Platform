@@ -23,8 +23,8 @@ type SmartContract struct {
 // Define the vote structure, with 4 properties.  Structure tags are used by encoding/json library
 type Asset_Votes struct {
 	Vote string `json:"vote"`
-	OwnerId  string `json:"ownerid"`
 	OwnerDesc string `json:"ownerdesc"`
+	Voting string `json:"voting"`
 }
 
 type Votings struct {
@@ -51,7 +51,7 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	if function == "queryVoter" {
 		return s.queryVoter(APIstub, args)
 	} else if function == "queryVotings" {
-		return s.queryVotings(APIstub)
+		return s.queryVotings(APIstub, args)
 	} else if function == "queryAllVottings" {
 		return s.queryAllVottings(APIstub)
 	} else if function == "initLedger" {
@@ -60,6 +60,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryAllVotes(APIstub)
 	} else if function == "doVoting" {
 		return s.doVoting(APIstub, args)
+	} else if function == "createVoting" {
+		return s.createVoting(APIstub, args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
@@ -71,8 +73,8 @@ func (s *SmartContract) queryVotings(APIstub shim.ChaincodeStubInterface, args [
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	voterAsBytes, _ := APIstub.GetState(args[0])
-	return shim.Success(voterAsBytes)
+	votingAsBytes, _ := APIstub.GetState(args[0])
+	return shim.Success(votingAsBytes)
 }
 
 // Query votes
@@ -88,15 +90,17 @@ func (s *SmartContract) queryVoter(APIstub shim.ChaincodeStubInterface, args []s
 
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	voters := []Asset_Votes{
-	    Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "AUTh"},
-		Asset_Votes{Vote: "NO", OwnerId: "12345", OwnerDesc: "Almerys"},
-		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Eolas"},
-		Asset_Votes{Vote: "YES", OwnerId: "12345", OwnerDesc: "Nuro"},
+	    Asset_Votes{Vote: "YES", OwnerDesc: "AUTh", Voting:"Test Voting"},
+		Asset_Votes{Vote: "NO", OwnerDesc: "Almerys", Voting:"Test Voting"},
+		Asset_Votes{Vote: "YES", OwnerDesc: "Eolas", Voting:"Test Voting"},
+		Asset_Votes{Vote: "YES", OwnerDesc: "Nuro", Voting:"Test Voting"},
 	}
 
 	votings := []Votings{
-		Votings{Name: "Test Voting 1"},
-		Votings{Name: "Test Voting 2"}
+		Votings{Name: "Test1"},
+		Votings{Name: "Test2"},
+		Votings{Name: "Test3"},
+		Votings{Name: "Test4"},
 	}
 
 	i := 0
@@ -106,6 +110,15 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 		APIstub.PutState("VOTER"+strconv.Itoa(i), voterAsBytes)
 		fmt.Println("Added", voters[i])
 		i = i + 1
+	}
+
+	j := 0
+	for j < len(votings) {
+		fmt.Println("j is ", j)
+		votingAsBytes, _ := json.Marshal(votings[j])
+		APIstub.PutState("VOTING"+strconv.Itoa(j), votingAsBytes)
+		fmt.Println("Added", votings[j])
+		j = j + 1
 	}
 
 	return shim.Success(nil)
@@ -157,7 +170,7 @@ func (s *SmartContract) queryAllVotes(APIstub shim.ChaincodeStubInterface) sc.Re
 
 func (s *SmartContract) queryAllVottings(APIstub shim.ChaincodeStubInterface) sc.Response {
 
-	startKey := "VOTING1"
+	startKey := "VOTING0"
 	endKey := "VOTING999"
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
@@ -204,12 +217,12 @@ func (s *SmartContract) createVoting(APIstub shim.ChaincodeStubInterface, args [
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
-	voterAsBytes, _ := APIstub.GetState(args[0])
-	vote := Votings{}
+	votingAsBytes, _ := APIstub.GetState(args[0])
+	name := Votings{}
 
 
 
-	json.Unmarshal(voterAsBytes, &vote)
+	json.Unmarshal(votingAsBytes, &name)
 	// if (name.Name == "VOTINGNAME"){
 		fmt.Println("Voting accepted!")
 		name.Name = args[1]
@@ -218,16 +231,16 @@ func (s *SmartContract) createVoting(APIstub shim.ChaincodeStubInterface, args [
 //	}
 
 
-	voterAsBytes, _ = json.Marshal(vote)
-	APIstub.PutState(args[0], voterAsBytes)
+	votingAsBytes, _ = json.Marshal(name)
+	APIstub.PutState(args[0], votingAsBytes)
 
 	return shim.Success(nil)
 }
 
 func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
 	voterAsBytes, _ := APIstub.GetState(args[0])
@@ -236,12 +249,14 @@ func (s *SmartContract) doVoting(APIstub shim.ChaincodeStubInterface, args []str
 
 
 	json.Unmarshal(voterAsBytes, &vote)
-	// if (vote.Vote == "VOTER"){
+	//if (vote.Vote == "VOTER"){
 		fmt.Println("You havent voted before, vote accepted!")
 		vote.Vote = args[1]
-//	}else{
-//		return shim.Error("Already voted before!, you can only vote once")
-//	}
+		vote.Voting = args[2]
+		vote.OwnerDesc = args[3]
+	//}else{
+	//	return shim.Error("Already voted before!, you can only vote once")
+	//}
 
 
 	voterAsBytes, _ = json.Marshal(vote)

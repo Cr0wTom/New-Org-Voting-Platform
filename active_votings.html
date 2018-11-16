@@ -34,8 +34,15 @@
                 });
 
         }
+<<<<<<< HEAD
         $scope.createvote = function(votevalue) {
             $http.get('http://localhost:8080/VOTING/'+$scope.idvoting+'/'+votevalue)
+=======
+        $scope.createvote = function(votingvalue) {
+            let votingvalue = $scope.voting;
+            console.log(voting)
+            $http.get('http://localhost:8080/VOTING/'+$scope.idvoting+'/'+votingvalue)
+>>>>>>> a971f29428bb13342d0a555a8fc1c3128bcc1934
                 .success(function(data) {
                     console.log(data)
                     alert(data);
@@ -200,7 +207,12 @@
                         <h2 class="wow fadeInUp" data-wow-delay="0.2s">Votings List for New Org Add</h2>
 
                         <div class="form-group">
+<<<<<<< HEAD
                             <input type="text" ng-model="idvoting" placeholder="Voter Name" class="form-control input-lg text-center" />
+=======
+                            <input type="text" ng-model="idvoting" placeholder="Voting ID" class="form-control input-lg text-center" /></br>
+                            <input type="text" ng-model="voting" placeholder="Voting Name" class="form-control input-lg text-center" />
+>>>>>>> a971f29428bb13342d0a555a8fc1c3128bcc1934
                         </div>
                         <div class="dream-btn-group wow fadeInUp" data-wow-delay="0.4s">
                             <button class="btn dream-btn mr-3" ng-click="inquiry()">Query</button>

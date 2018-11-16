@@ -38,6 +38,19 @@ app.get('/index.html', function(req,res) {
   res.sendfile("./index.html");
 });
 
+<<<<<<< HEAD
+=======
+app.get('/voting/:id/:voting', function (req, res, next) {
+    console.log('ID:', req.params.id);
+    console.log('VOTING:', req.params.voting);
+    next();
+  }, function (req, res, next) {
+      vote.createvoting(req.params.id,req.params.voting,
+            function back(param){ res.send(param); }
+      );
+  });
+
+>>>>>>> a971f29428bb13342d0a555a8fc1c3128bcc1934
 app.get('/voter/:id/:vote/:voting', function (req, res, next) {
   console.log('ID:', req.params.id);
   console.log('VOTE:', req.params.vote);

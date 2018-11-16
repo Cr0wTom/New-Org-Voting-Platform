@@ -29,7 +29,6 @@ var tx_id = null;
 
 
 module.exports = {
-
 createvoting: function (votingid,callback) {
 // create the key value store as defined in the fabric-client/config/default.json 'key-value-store' setting
 Fabric_Client.newDefaultKeyValueStore({ path: store_path

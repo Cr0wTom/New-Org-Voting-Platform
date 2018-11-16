@@ -49,6 +49,7 @@ app.get('/voting/:id/:voting', function (req, res, next) {
       );
   });
 
+
 app.get('/voter/:id/:vote/:voting', function (req, res, next) {
   console.log('ID:', req.params.id);
   console.log('VOTE:', req.params.vote);

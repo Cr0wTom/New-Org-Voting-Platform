@@ -1,6 +1,7 @@
 # New Organization Voting Platform
 
 ##How to run the network
+
   ##Place the folder inside the fabric-samples folder, and execute the following.
   npm install
   ./startFabric.sh

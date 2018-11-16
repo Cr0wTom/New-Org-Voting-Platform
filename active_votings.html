@@ -22,7 +22,8 @@
         $scope.names = [];
     $scope.isVisible=true;
     $scope.voteVisible=false;
-        $scope.inquiry = function() {
+        
+    $scope.inquiry = function() {
           $scope.voteVisible=true;
             $http.get('http://localhost:8080/query_votings')
                 .success(function(data) {
@@ -32,6 +33,21 @@
                     console.log('Error: ' + data);
                 });
 
+        }
+        $scope.createvote = function(votevalue) {
+            $http.get('http://localhost:8080/VOTING/'+$scope.idvoting+'/'+votevalue)
+                .success(function(data) {
+                    console.log(data)
+                    alert(data);
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                });
+        alert("Are you sure you want to submit this vote?");
+            $scope.idvoting="";
+            //$scope.vote="";
+        }
+        
         }
     });
     </script>
@@ -181,9 +197,14 @@
                 <!-- Welcome Content -->
                 <div class="col-12 col-md-7">
                     <div class="welcome-content">
-                        <h2 class="wow fadeInUp" data-wow-delay="0.2s">Votings Listo for New Org Add</h2>
+                        <h2 class="wow fadeInUp" data-wow-delay="0.2s">Votings List for New Org Add</h2>
+
+                        <div class="form-group">
+                            <input type="text" ng-model="idvoting" placeholder="Voter Name" class="form-control input-lg text-center" />
+                        </div>
                         <div class="dream-btn-group wow fadeInUp" data-wow-delay="0.4s">
                             <button class="btn dream-btn mr-3" ng-click="inquiry()">Query</button>
+                            <button class="btn dream-btn" ng-click="createvote()">Create</button>
                         </div>
                     </div>
                 </div>
@@ -209,19 +230,13 @@
 <div class="form-group">
 <table ng-show="voteVisible" cellpadding="1" cellspacing="1" class="table table-dark">
           <tr>
-              <th scope="col">Voter ID</th>
-              <th scope="col">Document</th>
-  <th scope="col">Name</th>
-  <th scope="col">Factor</th>
-  <th scope="col">Vote</th>
+              <th scope="col">Voting ID</th>
+    <th scope="col">Name</th>
           </tr>
 <tbody ng-repeat="n in Blockchain">
               <tr>
                   <th scope="row">{{n.Key}}</th>
-              <td>{{n.Record.ownerid}}</td>
-              <td>{{n.Record.ownerdesc}}</td>
-                  <td>{{n.Record.factor}}</td>
-              <td>{{n.Record.vote}}</td>
+              <td>{{n.Record.name}}</td>
               </tr>
           </tbody>
 </table>

@@ -18,6 +18,14 @@ app.get('/query', function(req, res) {
         );
 });
 
+app.get('/query_votings', function(req, res) { 
+  var queryres = vote.query_votings(
+        function back(param){
+            res.send(param);
+        }
+    );
+});
+
 app.get('/graph', function(req, res) { 
   var queryres = vote.graph(
         function back(param){
@@ -30,12 +38,13 @@ app.get('/index.html', function(req,res) {
   res.sendfile("./index.html");
 });
 
-app.get('/votar/:id/:vote', function (req, res, next) {
+app.get('/voter/:id/:vote/:voting', function (req, res, next) {
   console.log('ID:', req.params.id);
   console.log('VOTE:', req.params.vote);
+  console.log('VOTING:', req.params.voting);
   next();
 }, function (req, res, next) {
-    vote.dovote(req.params.id,req.params.vote,
+    vote.dovote(req.params.id,req.params.vote,req.params.voting,
           function back(param){ res.send(param); }
     );
 });

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html ng-app="lostsysApp">
 
-<!-- Mirrored from 155.207.131.145:5110/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Jun 2018 12:06:35 GMT -->
-<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -19,12 +19,28 @@
 
 
     angularTodo.controller('mainController', function($scope, $http) {
+
+        
+    $scope.voteVisible=true;
+    $http.get('http://localhost:8080/query_votings')
+        .success(function(data) {
+            console.log(data)
+            $scope.votings = data;
+            $scope.selectedVote = $scope.votings[0];
+        })
+        .error(function(data) {
+            console.log('Error: ' + data);
+        });
         $scope.names = [];
     $scope.isVisible=true;
+    $scope.selectedVote=null;
     $scope.voteVisible=false;
+    
 
         $scope.addVote = function(votevalue) {
-            $http.get('http://localhost:8080/votar/'+$scope.idvoter+'/'+votevalue)
+            let voting = $scope.selectedVote.Record.name;
+            console.log(voting)
+            $http.get('http://localhost:8080/VOTER/'+$scope.idvoter+'/'+votevalue+'/'+voting)
                 .success(function(data) {
                     console.log(data)
                     alert(data);
@@ -36,6 +52,16 @@
             $scope.idvoter="";
             //$scope.vote="";
         }
+        
+        $scope.loadgraph = function() {
+            $http.get('http://localhost:8080/graph')
+                .success(function(mdata) {
+                    drawChart(mdata);
+                })
+                .error(function(mdata) {
+                    console.log('Error: ' + mdata);
+                });
+        }
         $scope.inquiry = function() {
           $scope.voteVisible=true;
             $http.get('http://localhost:8080/query')
@@ -46,15 +72,6 @@
                     console.log('Error: ' + data);
                 });
 
-        }
-        $scope.loadgraph = function() {
-            $http.get('http://localhost:8080/graph')
-                .success(function(mdata) {
-                    drawChart(mdata);
-                })
-                .error(function(mdata) {
-                    console.log('Error: ' + mdata);
-                });
         }
     });
     </script>
@@ -209,7 +226,13 @@
                         <h3 class="wow fadeInUp" data-wow-delay="0.2s">Select your voting:</h3>
                         
                         <div class="form-group">
-                            <input type="text" ng-model="idvoter" placeholder="Voter" class="form-control input-lg text-center" />
+                            
+                            <select ng-options="voting.Record.name for voting in votings" ng-model="selectedVote" class="form-control">
+                                              
+                            </select> 
+                        </div>
+                        <div class="form-group">
+                                <input type="text" ng-model="idvoter" placeholder="Voter Name" class="form-control input-lg text-center" />
                         </div>
                         <div class="form-group">
                             <button class="btn dream-btn mr-3" ng-click="addVote('YES')">YES</button>
@@ -245,18 +268,16 @@
 <table ng-show="voteVisible" cellpadding="1" cellspacing="1" class="table table-dark">
           <tr>
               <th scope="col">Voter ID</th>
-              <th scope="col">Document</th>
   <th scope="col">Name</th>
-  <th scope="col">Factor</th>
   <th scope="col">Vote</th>
+  <th scope="col">Voting</th>
           </tr>
 <tbody ng-repeat="n in Blockchain">
               <tr>
                   <th scope="row">{{n.Key}}</th>
-              <td>{{n.Record.ownerid}}</td>
               <td>{{n.Record.ownerdesc}}</td>
-                  <td>{{n.Record.factor}}</td>
               <td>{{n.Record.vote}}</td>
+              <td>{{n.Record.voting}}</td>
               </tr>
           </tbody>
 </table>
